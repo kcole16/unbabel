@@ -72,6 +72,7 @@ def user_resource():
 
 	elif request.method == 'PATCH':
 		info = json.loads(request.data)
+		
 		try:
 			name_update = info['name']
 			email_update = info['email']
