@@ -5,4 +5,4 @@ def get_database_connection():
 	conn_string = "dbname='unbabel'"
 	conn = psycopg2.connect(conn_string)
 	cursor = conn.cursor()
-	return cursor
+	return conn, cursor

@@ -12,22 +12,26 @@ app = Flask(__name__)
 def index():
 	"""Display Users"""
 	db = get_database_connection()
-	db.execute('select * from unbabel_user')
-	users = db.fetchall()
+	cursor = db[1]
+	cursor.execute('select * from unbabel_user')
+	users = db[1].fetchall()
 	return render_template('home.html', users=users)
 
 
 @app.route('/create', methods = ['GET','POST'])
 def create_user():
 	"""Create User"""
+	db = get_database_connection()
+	conn = db[0]
+	cursor = db[1]
 	if request.method == 'POST':
-		db = get_database_connection()
 		name = request.form['name']
 		email = request.form['email']
-		db.execute("select id from unbabel_user order by id desc limit 1")
-		primary_key = int(db.fetchall()[0][0])
+		cursor.execute("select id from unbabel_user order by id desc limit 1")
+		primary_key = int(cursor.fetchall()[0][0])
 		primary_key += 1 
-		db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
+		cursor.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
+		conn.commit()
 
 	return redirect('/')
 
@@ -38,10 +42,12 @@ def create_user():
 def user_resource():
 	"""Handle API HTTP Requests"""
 	db = get_database_connection()
+	conn = db[0]
+	cursor = db[1]
 
 	if request.method == 'GET':
-		db.execute('select * from unbabel_user')
-		records = db.fetchall()
+		cursor.execute('select * from unbabel_user')
+		records = cursor.fetchall()
 
 		"""Build dict of dicts, keyed on user id"""
 		json_dict = {} 
@@ -55,10 +61,11 @@ def user_resource():
 		info = json.loads(request.data) #request.json is another option here
 		name = info['name']
 		email = info['email']
-		db.execute("select id from unbabel_user order by id desc limit 1")
-		primary_key = int(db.fetchall()[0][0])
+		cursor.execute("select id from unbabel_user order by id desc limit 1")
+		primary_key = int(cursor.fetchall()[0][0])
 		primary_key += 1
-		db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
+		cursor.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
+		conn.commit()
 
 		return jsonify( { 'primary_key':primary_key, 'name': name, 'email':email } ), 201
 
@@ -70,7 +77,8 @@ def user_resource():
 			email_update = info['email']
 		except AttributeError:
 			pass
-		db.execute("update unbabel_user set name = '%s', email = '%s' where id = %d" % (name, email, user_id))
+		cursor.execute("update unbabel_user set name = '%s', email = '%s' where id = %d" % (name, email, user_id))
+		conn.commit()
 
 		return jsonify( {'name':name, 'email':email} ), 201
 
