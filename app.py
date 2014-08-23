@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-	"""UI homepage"""
+	"""Display Users"""
 	db = get_database_connection()
 	db.execute('select * from unbabel_user')
 	users = db.fetchall()
@@ -19,7 +19,7 @@ def index():
 
 @app.route('/create', methods = ['GET','POST'])
 def create_user():
-	"""UI Create User"""
+	"""Create User"""
 	if request.method == 'POST':
 		db = get_database_connection()
 		name = request.form['name']
@@ -27,8 +27,8 @@ def create_user():
 		db.execute("select id from unbabel_user order by id desc limit 1")
 		primary_key = int(db.fetchall()[0][0])
 		primary_key += 1 
-		# db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
-		db.execute("insert into unbabel_user values(2,'Kendall', 'my@amil.com')")
+		db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
+
 	return redirect('/')
 
 
@@ -43,10 +43,11 @@ def user_resource():
 		db.execute('select * from unbabel_user')
 		records = db.fetchall()
 
-		json_dict = {} #too verbose for a neat list comprehension
-		for record in records:
+		"""Build dict of dicts, keyed on user id"""
+		json_dict = {} 
+		for record in records:  
 			info_dict = {'name':record[1],'email':record[2]}
-			json_dict[record[0]] = info_dict
+			json_dict[record[0]] = info_dict 
 
 		return jsonify( json_dict ), 201
 
@@ -74,5 +75,10 @@ def user_resource():
 		return jsonify( {'name':name, 'email':email} ), 201
 
 
+"""Run server"""
 if __name__ == '__main__':
 	app.run(debug = True)
+
+
+
+	

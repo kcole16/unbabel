@@ -12,13 +12,13 @@
         <th>Name</th>
         <th>Email</th>
       </tr>
+      {% for user in users %}
       <tr>
-        {% for user in users %}
         <td>{{ user.0 }}</td>
         <td>{{ user.1 }}</td>
         <td>{{ user.2 }}</td>
-        {% endfor %}
       </tr>
+      {% endfor %}
     </table><br>
     {% endif %}
 
@@ -28,7 +28,6 @@
         <input type="email" name="email" placeholder="Email" required><br>
         <button class="btn" type="submit">Sign in</button>
       </form>
-
   </body>
   <script>
   $(document).ready(function() {
@@ -38,7 +37,7 @@
             type: 'post',
             dataType: 'json',
             data: $('form').serialize(),
-            success: console.log("Success")
+            success: alert("Success")
           });
      });
   });
