@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 
 """UI Routes"""
+
 @app.route('/')
 def index():
 	"""UI homepage"""
@@ -16,7 +17,7 @@ def index():
 	return render_template('home.html', users=users)
 
 
-@app.route('/unbabel/create', methods = ['GET','POST'])
+@app.route('/create', methods = ['GET','POST'])
 def create_user():
 	"""UI Create User"""
 	if request.method == 'POST':
@@ -28,13 +29,13 @@ def create_user():
 		primary_key += 1
 		db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
 		return redirect('/')
-
 	else:
 		return render_template('form.html')
 
 
 """API Route"""
-@app.route('/unbabel/api', methods = ['GET', 'POST', 'PATCH'])
+
+@app.route('/api', methods = ['GET', 'POST', 'PATCH'])
 def user_resource():
 	"""Handle API HTTP Requests"""
 	db = get_database_connection()
@@ -50,7 +51,6 @@ def user_resource():
 
 		return jsonify( json_list ), 201
 
-
 	elif request.method == 'POST':
 		info = json.loads(request.data) #request.json is another option here
 		name = info['name']
@@ -61,7 +61,6 @@ def user_resource():
 		db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
 
 		return jsonify( { 'primary_key':primary_key, 'name': name, 'email':email } ), 201
-
 
 	elif request.method == 'PATCH':
 		info = json.loads(request.data)
