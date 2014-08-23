@@ -64,13 +64,13 @@ def user_resource():
 
 	elif request.method == 'PATCH':
 		info = json.loads(request.data)
-		user = info['user_id']
+		user_id = int(info['user_id'])
 		try:
 			user_update = info['name']
 			email_update = info['email']
 		except AttributeError:
 			pass
-		db.execute("update unbabel_user set name = '%s', email = '%s'" % (name, email))
+		db.execute("update unbabel_user set name = '%s', email = '%s' where id = %d" % (name, email, user_id))
 
 		return jsonify( {'name':name, 'email':email} ), 201
 
