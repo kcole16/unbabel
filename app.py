@@ -24,6 +24,7 @@ def create_user():
 	db = get_database_connection()
 	conn = db[0]
 	cursor = db[1]
+
 	if request.method == 'POST':
 		name = request.form['name']
 		email = request.form['email']
@@ -71,16 +72,16 @@ def user_resource():
 
 	elif request.method == 'PATCH':
 		info = json.loads(request.data)
-		user_id = int(info['user_id'])
 		try:
-			user_update = info['name']
+			name_update = info['name']
 			email_update = info['email']
-		except AttributeError:
+		except KeyError:
 			pass
-		cursor.execute("update unbabel_user set name = '%s', email = '%s' where id = %d" % (name, email, user_id))
+
+		cursor.execute("update unbabel_user set name = '%s', email = '%s' where id = %d" % (name_update, email_update, user_id))
 		conn.commit()
 
-		return jsonify( {'name':name, 'email':email} ), 201
+		return jsonify( {'name':name_update, 'email':email_update} ), 201
 
 
 """Run server"""
