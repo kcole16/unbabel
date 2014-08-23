@@ -26,11 +26,10 @@ def create_user():
 		email = request.form['email']
 		db.execute("select id from unbabel_user order by id desc limit 1")
 		primary_key = int(db.fetchall()[0][0])
-		primary_key += 1
-		db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
-		return redirect('/')
-	else:
-		return render_template('form.html')
+		primary_key += 1 
+		# db.execute("insert into unbabel_user values(%d, '%s', '%s')" % (primary_key, name, email))
+		db.execute("insert into unbabel_user values(2,'Kendall', 'my@amil.com')")
+	return redirect('/')
 
 
 """API Route"""
@@ -46,8 +45,9 @@ def user_resource():
 
 		json_list = [] #too verbose for a neat list comprehension
 		for record in records:
-			info_dict = {'id':record[0],'email':record[1],'name':record[2]}
+			info_dict = {'id':record[0],'name':record[1],'email':record[2]}
 			json_list.append(info_dict)
+		print json_list
 
 		return jsonify( json_list ), 201
 
