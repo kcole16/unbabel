@@ -43,13 +43,12 @@ def user_resource():
 		db.execute('select * from unbabel_user')
 		records = db.fetchall()
 
-		json_list = [] #too verbose for a neat list comprehension
+		json_dict = {} #too verbose for a neat list comprehension
 		for record in records:
-			info_dict = {'id':record[0],'name':record[1],'email':record[2]}
-			json_list.append(info_dict)
-		print json_list
+			info_dict = {'name':record[1],'email':record[2]}
+			json_dict[record[0]] = info_dict
 
-		return jsonify( json_list ), 201
+		return jsonify( json_dict ), 201
 
 	elif request.method == 'POST':
 		info = json.loads(request.data) #request.json is another option here
